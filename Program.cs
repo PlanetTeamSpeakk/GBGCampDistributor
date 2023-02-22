@@ -52,7 +52,7 @@ public static class Program
         
         Console.WriteLine("Camps saved: " + saved);
 
-        foreach (Province province in map.Provinces.Values.Where(prov => !prov.Ours && prov.Neighbors.Sum(n => n.DesiredCount) > campTarget))
+        foreach (Province province in map.Provinces.Values.Where(prov => !prov.Ours && prov.Neighbors.Sum(n => n.DesiredCount) != campTarget))
         {
             int totalCamps = province.Neighbors.Sum(n => n.DesiredCount);
 
