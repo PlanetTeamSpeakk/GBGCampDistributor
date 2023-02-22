@@ -85,6 +85,41 @@ public class VolcanoArchipelagoMap : IMap
         Add("D3X", "D3Y", "D2S", "D3V");
         Add("D3Y", "D3Z", "D2T", "D3X");
         Add("D3Z", "A3V", "D2T", "D3Y");
+        
+        
+        // Fourth ring
+        Add("A4A", "D4H", "A3V", "A4B");
+        Add("A4B", "A4A", "A3V", "A4C");
+        Add("A4C", "A4B", "A3X", "A4D");
+        Add("A4D", "A4C", "A3X", "A4E");
+        Add("A4E", "A4D", "A3Y", "A4F");
+        Add("A4F", "A4E", "A3Y", "A4G");
+        Add("A4G", "A4F", "A3Z", "A4H");
+        Add("A4H", "A4G", "A3Z", "B4A");
+        Add("B4A", "A4H", "B3V", "B4B");
+        Add("B4B", "B4A", "B3V", "B4C");
+        Add("B4C", "B4B", "B3X", "B4D");
+        Add("B4D", "B4C", "B3X", "B4E");
+        Add("B4E", "B4D", "B3Y", "B4F");
+        Add("B4F", "B4E", "B3Y", "B4G");
+        Add("B4G", "B4F", "B3Z", "B4H");
+        Add("B4H", "B4G", "B3Z", "C4A");
+        Add("C4A", "B4H", "C3V", "C4B");
+        Add("C4B", "C4A", "C3V", "C4C");
+        Add("C4C", "C4B", "C3X", "C4D");
+        Add("C4D", "C4C", "C3X", "C4E");
+        Add("C4E", "C4D", "C3Y", "C4F");
+        Add("C4F", "C4E", "C3Y", "C4G");
+        Add("C4G", "C4F", "C3Z", "C4H");
+        Add("C4H", "C4G", "C3Z", "D4A");
+        Add("D4A", "C4H", "D3V", "D4B");
+        Add("D4B", "D4A", "D3V", "D4C");
+        Add("D4C", "D4B", "D3X", "D4D");
+        Add("D4D", "D4C", "D3X", "D4E");
+        Add("D4E", "D4D", "D3Y", "D4F");
+        Add("D4F", "D4E", "D3Y", "D4G");
+        Add("D4G", "D4F", "D3Z", "D4H");
+        Add("D4H", "D4G", "D3Z", "A4A");
 
         #endregion
 
