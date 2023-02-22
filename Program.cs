@@ -65,6 +65,9 @@ public static class Program
         Console.WriteLine("Camps saved: " + result.Sum(province => province.SlotCount - province.DesiredCount));
 
         PrintOvershotOrUndershot(map, campTarget);
+        
+        Console.WriteLine("Press any key to exit.");
+        Console.ReadKey();
     }
 
     private static IMap? ParseMap(string gbgData, int guildId)
