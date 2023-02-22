@@ -28,14 +28,18 @@ public static class Program
         }
 
 
+        const int campTarget = 4;
         string dataString = File.ReadAllText("gbgdata.txt");
         int lastSaved = -1;
         IMap? map = null;
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 100; i++)
         {
             // Parse data
             IMap? map0 = ParseMap(dataString, guildId.Value);
             if (map0 == null) return;
+
+            // Distribute camps
+            DistributeCamps(map0, campTarget);
 
             int saved = map0.Provinces.Values
                 .Where(prov => prov is {Ours: true, SlotCount: > 0})
@@ -48,11 +52,6 @@ public static class Program
         
         if (map == null) return; // Should be impossible.
         
-        // Distribute camps
-        Console.WriteLine("Data parsed, distributing camps...");
-        const int campTarget = 4;
-        DistributeCamps(map, campTarget);
-
 
         // Print results
         Console.WriteLine("Camps distributed, result: ");
