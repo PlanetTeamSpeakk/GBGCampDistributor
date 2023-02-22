@@ -42,7 +42,9 @@ public static class Program
         // Print results
         int saved = 0;
         Console.WriteLine("Camps distributed, result: ");
-        foreach (Province province in map.Provinces.Values.Where(prov => prov.Ours).OrderBy(province => province.Id))
+        foreach (Province province in map.Provinces.Values
+                     .Where(prov => prov is {Ours: true, SlotCount: > 0})
+                     .OrderBy(province => province.Id))
         {
             Console.WriteLine($" - {province.Name}: {province.DesiredCount}/{province.SlotCount}");
             saved += province.SlotCount - province.DesiredCount;
