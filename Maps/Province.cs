@@ -6,6 +6,7 @@ public class Province
 {
     public ISet<Province> Neighbors => _neighbors.ToImmutableHashSet();
     private readonly ISet<Province> _neighbors = new HashSet<Province>();
+    public int Id { get; }
     public string Name { get; }
     public int SlotCount { get; private set; }
     public bool Ours { get; private set; }
@@ -16,12 +17,10 @@ public class Province
     }
     private int _desiredCount;
 
-    public Province(string name) => Name = name;
-
-    public Province(string name, int slotCount, bool ours)
+    public Province(int id, string name)
     {
+        Id = id;
         Name = name;
-        Init(slotCount, ours);
     }
 
     public void Init(int slotCount, bool ours)

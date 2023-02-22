@@ -33,6 +33,7 @@ public static class Program
         if (map == null) return;
         Console.WriteLine("Data parsed, distributing camps...");
 
+        
         // Distribute camps
         const int campTarget = 4;
         DistributeCamps(map, campTarget);
@@ -41,7 +42,7 @@ public static class Program
         // Print results
         int saved = 0;
         Console.WriteLine("Camps distributed, result: ");
-        foreach (Province province in map.Provinces.Values.Where(prov => prov.Ours))
+        foreach (Province province in map.Provinces.Values.Where(prov => prov.Ours).OrderBy(province => province.Id))
         {
             Console.WriteLine($" - {province.Name}: {province.DesiredCount}/{province.SlotCount}");
             saved += province.SlotCount - province.DesiredCount;
@@ -128,6 +129,7 @@ public static class Program
 
                 int id = province["id"]?.GetValue<int>() ?? 0; // First province is missing the id key.
                 string name = map.IdToName(id);
+                
                 map.Provinces[name].Init(po["isSpawnSpot"]?.GetValue<bool>() ?? false ? 0 : // No camp slots on spawn spots
                     po["totalBuildingSlots"]?.GetValue<int>() ?? 0, po["ownerId"]!.GetValue<int>() == pid);
             }

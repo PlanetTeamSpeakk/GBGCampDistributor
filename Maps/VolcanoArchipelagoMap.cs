@@ -11,12 +11,12 @@ public class VolcanoArchipelagoMap : IMap
         Dictionary<string, Province> provinces = new()
         {
             // First ring
-            {"A1M", new Province("A1M")},
-            {"B1O", new Province("B1O")},
-            {"C1N", new Province("C1N")},
-            {"D1B", new Province("D1B")}
+            {"A1M", new Province(0, "A1M")},
+            {"B1O", new Province(1, "B1O")},
+            {"C1N", new Province(2, "C1N")},
+            {"D1B", new Province(3, "D1B")}
         };
-        
+
         for (int i = 0; i < 4; i++)
         {
             char quarterId = (char) ('A' + i);
@@ -25,21 +25,21 @@ public class VolcanoArchipelagoMap : IMap
             for (int j = 0; j < 2; j++)
             {
                 string name = $"{quarterId}2{(char)('S' + j)}";
-                provinces[name] = new Province(name);
+                provinces[name] = new Province(4 + i * 2 + j, name);
             }
 
             // Third ring
             for (int j = 0; j < 4; j++)
             {
                 string name = $"{quarterId}3{(char)('V' + (j == 0 ? 0 : j + 1))}";
-                provinces[name] = new Province(name);
+                provinces[name] = new Province(4 + 8 + i * 4 + j, name);
             }
 
             // Fourth ring
             for (int j = 0; j < 8; j++)
             {
                 string name = $"{quarterId}4{(char)('A' + j)}";
-                provinces[name] = new Province(name);
+                provinces[name] = new Province(4 + 8 + 16 + i * 8 + j, name);
             }
         }
 
@@ -142,7 +142,7 @@ public class VolcanoArchipelagoMap : IMap
             // Third ring (16 tiles)
             < 28 => $"{(char)('A' + (id - 12) / 4)}3{(id % 4 == 0 ? 'V' : (char)('W' + id % 4))}",
             // Fourth ring (32 tiles)
-            < 60 => $"{(char)('A' + (id - 28) / 8)}4{(char)('A' + id % 8)}",
+            < 60 => $"{(char)('A' + (id - 28) / 8)}4{(char)('A' + (id - 28) % 8)}",
             _ => throw new ArgumentOutOfRangeException(nameof(id), "Id must be at most 59.")
         };
     }
