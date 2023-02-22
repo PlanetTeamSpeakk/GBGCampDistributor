@@ -10,6 +10,7 @@ public class Province
     public string Name { get; }
     public int SlotCount { get; private set; }
     public bool Ours { get; private set; }
+    public bool IsSpawnSpot { get; private set; }
     public int DesiredCount
     {
         get => _desiredCount;
@@ -23,10 +24,11 @@ public class Province
         Name = name;
     }
 
-    public void Init(int slotCount, bool ours)
+    public void Init(int slotCount, bool ours, bool isSpawnSpot)
     {
         SlotCount = slotCount;
         Ours = ours;
+        IsSpawnSpot = isSpawnSpot;
     }
 
     public void AddNeighbor(Province p)
@@ -34,6 +36,4 @@ public class Province
         _neighbors.Add(p);
         p._neighbors.Add(this); // Add directly to avoid StackOverflow
     }
-
-    public void ForceSetDesired(int desired) => _desiredCount = desired;
 }

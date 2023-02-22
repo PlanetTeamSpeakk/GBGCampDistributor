@@ -26,46 +26,46 @@ public static class Program
             Console.ReadKey();
             return;
         }
+
+
+        string dataString = File.ReadAllText("gbgdata.txt");
+        int lastSaved = -1;
+        IMap? map = null;
+        for (int i = 0; i < 25; i++)
+        {
+            // Parse data
+            IMap? map0 = ParseMap(dataString, guildId.Value);
+            if (map0 == null) return;
+
+            int saved = map0.Provinces.Values
+                .Where(prov => prov is {Ours: true, SlotCount: > 0})
+                .Sum(province => province.SlotCount - province.DesiredCount);
+            
+            if (saved <= lastSaved) continue;
+            map = map0;
+            lastSaved = saved;
+        }
         
-
-        // Parse data
-        IMap? map = ParseMap(File.ReadAllText("gbgdata.txt"), guildId!.Value);
-        if (map == null) return;
-        Console.WriteLine("Data parsed, distributing camps...");
-
+        if (map == null) return; // Should be impossible.
         
         // Distribute camps
+        Console.WriteLine("Data parsed, distributing camps...");
         const int campTarget = 4;
         DistributeCamps(map, campTarget);
-        
+
 
         // Print results
-        int saved = 0;
         Console.WriteLine("Camps distributed, result: ");
-        foreach (Province province in map.Provinces.Values
-                     .Where(prov => prov is {Ours: true, SlotCount: > 0})
-                     .OrderBy(province => province.Id))
-        {
-            Console.WriteLine($" - {province.Name}: {province.DesiredCount}/{province.SlotCount}");
-            saved += province.SlotCount - province.DesiredCount;
-        }
+        IList<Province> result = map.Provinces.Values
+            .Where(prov => prov is {Ours: true, SlotCount: > 0})
+            .OrderBy(province => province.Id)
+            .ToList();
         
-        Console.WriteLine("Camps saved: " + saved);
+        foreach (Province province in result) Console.WriteLine($" - {province.Name}: {province.DesiredCount}/{province.SlotCount}");
 
-        foreach (Province province in map.Provinces.Values.Where(prov => !prov.Ours && prov.Neighbors.Sum(n => n.DesiredCount) != campTarget))
-        {
-            int totalCamps = province.Neighbors.Sum(n => n.DesiredCount);
+        Console.WriteLine("Camps saved: " + result.Sum(province => province.SlotCount - province.DesiredCount));
 
-            switch (totalCamps)
-            {
-                case > campTarget:
-                    Console.WriteLine($"Overshot {province.Name}: {totalCamps}");
-                    break;
-                case < campTarget:
-                    Console.WriteLine($"Undershot {province.Name}: {totalCamps}");
-                    break;
-            }
-        }
+        PrintOvershotOrUndershot(map, campTarget);
     }
 
     private static IMap? ParseMap(string gbgData, int guildId)
@@ -131,9 +131,10 @@ public static class Program
 
                 int id = province["id"]?.GetValue<int>() ?? 0; // First province is missing the id key.
                 string name = map.IdToName(id);
-                
-                map.Provinces[name].Init(po["isSpawnSpot"]?.GetValue<bool>() ?? false ? 0 : // No camp slots on spawn spots
-                    po["totalBuildingSlots"]?.GetValue<int>() ?? 0, po["ownerId"]!.GetValue<int>() == pid);
+
+                bool isSpawnSpot = po["isSpawnSpot"]?.GetValue<bool>() ?? false;
+                map.Provinces[name].Init(isSpawnSpot ? 0 : // No camp slots on spawn spots
+                    po["totalBuildingSlots"]?.GetValue<int>() ?? 0, po["ownerId"]!.GetValue<int>() == pid, isSpawnSpot);
             }
 
             return map;
@@ -185,5 +186,28 @@ public static class Program
                 }
             }
         }
+    }
+
+    private static void PrintOvershotOrUndershot(IMap map, int campTarget)
+    {
+        Dictionary<Province, int> overshot = new(), undershot = new();
+        
+        foreach (Province province in map.Provinces.Values.Where(prov => prov is {Ours: false, IsSpawnSpot: false} && 
+                                                                         prov.Neighbors.Sum(n => n.DesiredCount) != campTarget))
+        {
+            int totalCamps = province.Neighbors.Sum(n => n.DesiredCount);
+
+            if (totalCamps > campTarget) overshot[province] = totalCamps;
+            else if (totalCamps < campTarget) undershot[province] = totalCamps;
+        }
+
+        void LogResults(Dictionary<Province, int> res, string prefix)
+        {
+            Console.WriteLine(overshot.Count == 0 ? $"No {prefix}shoots" : $"{char.ToUpper(prefix[0]) + prefix[1..]}shot: " + 
+                                                                           string.Join(", ", res.Select(pair => $"{pair.Key.Name} ({pair.Value})")));
+        }
+        
+        LogResults(overshot, "over");
+        LogResults(undershot, "under");
     }
 }

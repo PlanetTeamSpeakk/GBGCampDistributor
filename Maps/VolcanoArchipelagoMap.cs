@@ -123,7 +123,10 @@ public class VolcanoArchipelagoMap : IMap
 
         #endregion
 
-        Provinces = provinces.ToImmutableDictionary();
+        // Shuffle dictionary to ensure we get a proper result.
+        Provinces = provinces
+            .OrderBy(_ => Random.Shared.Next())
+            .ToImmutableDictionary();
     }
     
     public string IdToName(int id)
