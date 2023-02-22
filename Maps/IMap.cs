@@ -2,7 +2,7 @@
 
 public interface IMap
 {
-    public IEnumerable<Province> Provinces { get; }
+    public IDictionary<string, Province> Provinces { get; }
 
     /// <summary>
     /// Converts a province id to a province name.

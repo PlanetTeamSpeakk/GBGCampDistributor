@@ -4,7 +4,7 @@ namespace GBGCampDistributor.Maps;
 
 public class VolcanoArchipelagoMap : IMap
 {
-    public IEnumerable<Province> Provinces { get; }
+    public IDictionary<string, Province> Provinces { get; }
 
     public VolcanoArchipelagoMap()
     {
@@ -88,7 +88,7 @@ public class VolcanoArchipelagoMap : IMap
 
         #endregion
 
-        Provinces = provinces.Values.ToImmutableList();
+        Provinces = provinces.ToImmutableDictionary();
     }
     
     public string IdToName(int id)
@@ -96,7 +96,12 @@ public class VolcanoArchipelagoMap : IMap
         return id switch
         {
             // First ring (4 tiles)
-            < 4 => $"{(char)('A' + id)}1{(id == 3 ? 'O' : (char)('M' + id))}",
+            < 4 => $"{(char)('A' + id)}1{id switch {
+                0 => 'M',
+                1 => 'O',
+                2 => 'N',
+                3 => 'B',
+                _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Impossible error")}}",
             // Second ring (8 tiles)
             < 12 => $"{(char)('A' + (id - 4) / 2)}2{(id % 2 == 0 ? 'S' : 'T')}",
             // Third ring (16 tiles)
