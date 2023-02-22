@@ -31,7 +31,7 @@ public static class Program
         // Parse data
         IMap? map = ParseMap(File.ReadAllText("gbgdata.txt"), guildId!.Value);
         if (map == null) return;
-        
+        Console.WriteLine("Data parsed, distributing camps...");
 
         // Distribute camps
         const int campTarget = 4;
@@ -40,7 +40,7 @@ public static class Program
 
         // Print results
         int saved = 0;
-        Console.WriteLine("Result: ");
+        Console.WriteLine("Camps distributed, result: ");
         foreach (Province province in map.Provinces.Values.Where(prov => prov.Ours))
         {
             Console.WriteLine($" - {province.Name}: {province.DesiredCount}/{province.SlotCount}");
