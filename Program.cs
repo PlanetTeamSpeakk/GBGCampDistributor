@@ -97,6 +97,8 @@ public static class Program
 
             JsonObject resp = o["responseData"]!.AsObject();
 
+            // Retrieve the participant id of the requested guild.
+            // This is used to determine which provinces are ours.
             int? pid = null;
             JsonArray participants = resp["battlegroundParticipants"]!.AsArray();
             foreach (JsonNode? participant in participants)
@@ -115,17 +117,26 @@ public static class Program
                 return null;
             }
 
+            
+            // Parse map using map id
             JsonObject mapData = resp["map"]!.AsObject();
-            if (mapData["id"]!.ToString() != "volcano_archipelago")
+            IMap? map = mapData["id"]!.ToString() switch
             {
-                Console.WriteLine("Invalid map! This map is not yet supported, please contact PlanetTeamSpeak#4157 on Discord about this.\n" +
+                "volcano_archipelago" => new VolcanoArchipelagoMap(),
+                // TODO support other map next season
+                _ => null
+            };
+
+            if (map == null)
+            {
+                Console.WriteLine("Invalid map! This map is not yet supported, please contact PlanetTeamSpeak#4157 on Discord about this. " +
+                                  $"Map id: {mapData["id"]}\n" +
                                   "Press any key to exit.");
                 Console.ReadKey();
                 return null;
             }
 
-            IMap map = new VolcanoArchipelagoMap(); // TODO support other map
-            
+            // Retrieve the slot count for every province and determine which ones are ours.
             JsonArray provincesData = mapData["provinces"]!.AsArray();
             foreach (JsonNode? province in provincesData)
             {
