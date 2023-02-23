@@ -32,6 +32,7 @@ public static class Program
         string dataString = File.ReadAllText("gbgdata.txt");
         int lastSaved = -1;
         IMap? map = null;
+        // Retrying a couple times to ensure best result
         for (int i = 0; i < 100; i++)
         {
             // Parse data
@@ -166,7 +167,7 @@ public static class Program
             if (p.Ours) continue;
 
             IList<Province> ours = p.Neighbors.Where(n => n.Ours).ToList();
-            int totalCC = ours.Select(op => op.SlotCount).Sum();
+            int totalCC = ours.Sum(op => op.SlotCount);
 
             // We cannot achieve the desired amount of camps.
             // Simply give each neighboring province the maximum amount of camps it can hold.
